@@ -23,8 +23,8 @@ namespace TaskProcessingSystem.Workers
 
             var emailMetadata = new EmailMetadataBuilder()
                 .AddSubject("Notification for new task")
-                .AddBody("This is email to inform you that we have a new task, please check that one!")
-                .AddToEmail("phunlh2001@gmail.com")
+                .AddBody("This email to inform you that we have a new task, please check that one on backlog!")
+                .AddToEmail("annie2005@gmail.com")
                 .Build();
 
             await _emailService.Send(emailMetadata);
