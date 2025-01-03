@@ -8,15 +8,15 @@ namespace TaskProcessingSystem.Queues
 
         public async Task<string> DequeueAsync(CancellationToken cancellationToken)
         {
-            var id = await _channel.Reader.ReadAsync(cancellationToken);
-            Console.WriteLine($"Job dequeued: '{id}'");
-            return id;
+            var task = await _channel.Reader.ReadAsync(cancellationToken);
+            Console.WriteLine($"Job dequeued: {task}");
+            return task;
         }
 
-        public async Task EnqueueAsync(string taskId)
+        public async Task EnqueueAsync(string task)
         {
-            Console.WriteLine($"Job enqueued '{taskId}'");
-            await _channel.Writer.WriteAsync(taskId);
+            Console.WriteLine($"Job enqueued: {task}");
+            await _channel.Writer.WriteAsync(task);
         }
     }
 }

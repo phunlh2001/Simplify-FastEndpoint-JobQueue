@@ -3,12 +3,15 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using TaskProcessingSystem.DTOs;
 using TaskProcessingSystem.Processors;
 using TaskProcessingSystem.Queues;
+using TaskProcessingSystem.Services.File;
 
 namespace TaskProcessingSystem.Endpoints
 {
-    public class AddTaskEndpoint(IJobQueue queue) : Endpoint<AddTaskRequest, Results<Ok<ResInfo<AddTaskRequest>>, ProblemDetails>>
+    public class AddTaskEndpoint(IJobQueue queue, IFileHandler fileHandler) : Endpoint<AddTaskRequest, Results<Ok<ResInfo<AddTaskRequest>>, ProblemDetails>>
     {
         private readonly IJobQueue _queue = queue;
+        private readonly IFileHandler _fileHandler = fileHandler;
+        private const string FILE_PATH = "task.txt";
 
         public override void Configure()
         {
@@ -36,9 +39,19 @@ namespace TaskProcessingSystem.Endpoints
                 return new ProblemDetails(ValidationFailures);
             }
 
-            var taskId = Guid.NewGuid();
+            var taskId = new Random().Next(100, 1000);
+            var task = new Models.Task
+            {
+                Id = taskId,
+                Name = req.Name,
+                Description = req.Description,
+                CreatedAt = DateTime.Now.ToString("dd/MM/yyyy"),
+            };
 
             await _queue.EnqueueAsync(taskId.ToString());
+
+            _fileHandler.Write(task, FILE_PATH);
+            Console.WriteLine($"Write task {taskId} into file {FILE_PATH} successfully!");
 
             return TypedResults.Ok(new ResInfo<AddTaskRequest>
             {
