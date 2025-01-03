@@ -15,7 +15,7 @@ builder.Services.AddHostedService<TaskWorker>();
 builder.Services.AddSingleton<IEmailService, EmailService>();
 builder.Services.AddFluentEmail(builder.Configuration);
 
-builder.Services.AddScoped<IFileHandler, FileHandler>();
+builder.Services.AddSingleton<IFileHandler, FileHandler>();
 
 var app = builder.Build();
 app.UseFastEndpoints().UseSwaggerGen();

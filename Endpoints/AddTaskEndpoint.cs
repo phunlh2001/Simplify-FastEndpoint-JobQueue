@@ -42,16 +42,16 @@ namespace TaskProcessingSystem.Endpoints
             var taskId = new Random().Next(100, 1000);
             var task = new Models.Task
             {
-                Id = taskId,
+                Id = taskId.ToString(),
                 Name = req.Name,
                 Description = req.Description,
                 CreatedAt = DateTime.Now.ToString("dd/MM/yyyy"),
             };
 
-            await _queue.EnqueueAsync(taskId.ToString());
-
             _fileHandler.Write(task, FILE_PATH);
             Console.WriteLine($"Write task {taskId} into file {FILE_PATH} successfully!");
+
+            await _queue.EnqueueAsync(taskId.ToString());
 
             return TypedResults.Ok(new ResInfo<AddTaskRequest>
             {
